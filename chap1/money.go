@@ -8,10 +8,6 @@ func NewDollar(amount int) Dollar {
 	return Dollar{Money{amount}}
 }
 
-func (d *Dollar) times(multiplier int) Dollar {
-	return Dollar{Money{d.amount * multiplier}}
-}
-
 func (d *Dollar) equals(anotherMoney any) bool {
 	dollar, ok := anotherMoney.(Dollar)
 	if !ok {
@@ -28,8 +24,8 @@ func NewFranc(amount int) Franc {
 	return Franc{Money{amount}}
 }
 
-func (f *Franc) times(multiplier int) Franc {
-	return Franc{Money{f.amount * multiplier}}
+func (m Money) Times(multiplier int) Money {
+	return Money{m.amount * multiplier}
 }
 
 func (f *Franc) equals(anotherMoney any) bool {
@@ -40,10 +36,20 @@ func (f *Franc) equals(anotherMoney any) bool {
 	return f.amount == franc.amount
 }
 
-type Money struct {
-	amount int
+func (m Money) Equals(other Money) bool {
+	return m.amount == other.amount && m.GetType() == other.GetType()
 }
 
-type MoneyI interface {
-	equals(anotherMoney any) bool
+func (d Dollar) GetType() string {
+	return "Dollar"
+}
+func (f Franc) GetType() string {
+	return "Franc"
+}
+func (m Money) GetType() string {
+	return "Money"
+}
+
+type Money struct {
+	amount int
 }
