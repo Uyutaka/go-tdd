@@ -1,33 +1,40 @@
 package main
 
 type Dollar struct {
-	amount int
+	Money
 }
 
 func NewDollar(amount int) Dollar {
-	return Dollar{amount: amount}
+	return Dollar{Money{amount}}
 }
 
 func (d *Dollar) times(multiplier int) Dollar {
-	return Dollar{amount: d.amount * multiplier}
-}
-
-func (d *Dollar) equals(anotherDollar any) bool {
-	return d.amount == anotherDollar.(Dollar).amount
+	return Dollar{Money{d.amount * multiplier}}
 }
 
 type Franc struct {
-	amount int
+	Money
 }
 
 func NewFranc(amount int) Franc {
-	return Franc{amount: amount}
+	return Franc{Money{amount}}
 }
 
-func (d *Franc) times(multiplier int) Franc {
-	return Franc{amount: d.amount * multiplier}
+func (f *Franc) times(multiplier int) Franc {
+	return Franc{Money{f.amount * multiplier}}
 }
 
-func (f *Franc) equals(anotherFranc any) bool {
-	return f.amount == anotherFranc.(Franc).amount
+type Money struct {
+	amount int
+}
+
+func (m *Money) equals(anotherMoney any) bool {
+	switch value := anotherMoney.(type) {
+	case Dollar:
+		return m.amount == value.amount
+	case Franc:
+		return m.amount == value.amount
+	default:
+		return false
+	}
 }

@@ -14,7 +14,7 @@ func TestTimes(t *testing.T) {
 	})
 }
 
-func TestEquality(t *testing.T) {
+func TestDollarEquals(t *testing.T) {
 	t.Run("should return true if two Dollars have same amount", func(t *testing.T) {
 		dollar := NewDollar(5)
 		assert.True(t, dollar.equals(NewDollar(5)))
@@ -30,5 +30,16 @@ func TestFrancMultiplication(t *testing.T) {
 		five := NewFranc(5)
 		assert.Equal(t, NewFranc(10), five.times(2))
 		assert.Equal(t, NewFranc(15), five.times(3))
+	})
+}
+
+func TestFrancEquals(t *testing.T) {
+	t.Run("should return true if two Francs have same amount", func(t *testing.T) {
+		franc := NewFranc(5)
+		assert.True(t, franc.equals(NewFranc(5)))
+	})
+	t.Run("should return false if two Francs have different amount", func(t *testing.T) {
+		franc := NewFranc(5)
+		assert.False(t, franc.equals(NewFranc(7)))
 	})
 }
