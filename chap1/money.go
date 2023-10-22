@@ -12,6 +12,14 @@ func (d *Dollar) times(multiplier int) Dollar {
 	return Dollar{Money{d.amount * multiplier}}
 }
 
+func (d *Dollar) equals(anotherMoney any) bool {
+	dollar, ok := anotherMoney.(Dollar)
+	if !ok {
+		return false
+	}
+	return d.amount == dollar.amount
+}
+
 type Franc struct {
 	Money
 }
@@ -24,17 +32,18 @@ func (f *Franc) times(multiplier int) Franc {
 	return Franc{Money{f.amount * multiplier}}
 }
 
+func (f *Franc) equals(anotherMoney any) bool {
+	franc, ok := anotherMoney.(Franc)
+	if !ok {
+		return false
+	}
+	return f.amount == franc.amount
+}
+
 type Money struct {
 	amount int
 }
 
-func (m *Money) equals(anotherMoney any) bool {
-	switch value := anotherMoney.(type) {
-	case Dollar:
-		return m.amount == value.amount
-	case Franc:
-		return m.amount == value.amount
-	default:
-		return false
-	}
+type MoneyI interface {
+	equals(anotherMoney any) bool
 }
