@@ -7,11 +7,11 @@ import (
 )
 
 func TestTimes(t *testing.T) {
-	five := New(5)
-	product := five.times(2)
-	assert.Equal(t, 10, product.amount)
-	product = five.times(3)
-	assert.Equal(t, 15, product.amount)
+	t.Run("should return same amount if Dollar multiplies by times()", func(t *testing.T) {
+		five := New(5)
+		assert.Equal(t, New(10), five.times(2))
+		assert.Equal(t, New(15), five.times(3))
+	})
 }
 
 func TestEquality(t *testing.T) {
