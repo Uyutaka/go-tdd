@@ -5,7 +5,7 @@ type Dollar struct {
 }
 
 func NewDollar(amount int) Dollar {
-	return Dollar{Money{amount}}
+	return Dollar{Money{amount: amount, currency: "USD"}}
 }
 
 func (d *Dollar) equals(anotherMoney any) bool {
@@ -21,11 +21,11 @@ type Franc struct {
 }
 
 func NewFranc(amount int) Franc {
-	return Franc{Money{amount}}
+	return Franc{Money{amount: amount, currency: "CHF"}}
 }
 
 func (m Money) Times(multiplier int) Money {
-	return Money{m.amount * multiplier}
+	return Money{amount: m.amount * multiplier}
 }
 
 func (f *Franc) equals(anotherMoney any) bool {
@@ -37,19 +37,14 @@ func (f *Franc) equals(anotherMoney any) bool {
 }
 
 func (m Money) Equals(other Money) bool {
-	return m.amount == other.amount && m.GetType() == other.GetType()
+	return m.amount == other.amount && m.Currency() == other.Currency()
 }
 
-func (d Dollar) GetType() string {
-	return "Dollar"
-}
-func (f Franc) GetType() string {
-	return "Franc"
-}
-func (m Money) GetType() string {
-	return "Money"
+func (m Money) Currency() string {
+	return m.currency
 }
 
 type Money struct {
-	amount int
+	amount   int
+	currency string
 }
