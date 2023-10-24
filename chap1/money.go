@@ -8,14 +8,6 @@ func NewDollar(amount int) Dollar {
 	return Dollar{Money{amount: amount, currency: "USD"}}
 }
 
-func (d *Dollar) equals(anotherMoney any) bool {
-	dollar, ok := anotherMoney.(Dollar)
-	if !ok {
-		return false
-	}
-	return d.amount == dollar.amount
-}
-
 type Franc struct {
 	Money
 }
@@ -25,19 +17,23 @@ func NewFranc(amount int) Franc {
 }
 
 func (m Money) Times(multiplier int) Money {
-	return Money{amount: m.amount * multiplier}
+	return NewMoney(m.amount*multiplier, m.currency)
 }
 
-func (f *Franc) equals(anotherMoney any) bool {
-	franc, ok := anotherMoney.(Franc)
-	if !ok {
-		return false
-	}
-	return f.amount == franc.amount
+func NewMoney(amount int, currency string) Money {
+	return Money{amount: amount, currency: currency}
 }
 
 func (m Money) Equals(other Money) bool {
 	return m.amount == other.amount && m.Currency() == other.Currency()
+}
+
+func DollarToMoney(d Dollar) Money {
+	return NewMoney(d.amount, "USD")
+}
+
+func FrancToMoney(f Franc) Money {
+	return NewMoney(f.amount, "CHF")
 }
 
 func (m Money) Currency() string {
