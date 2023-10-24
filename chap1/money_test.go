@@ -8,58 +8,39 @@ import (
 
 func TestTimes(t *testing.T) {
 	t.Run("should return same amount if Dollar multiplies by times()", func(t *testing.T) {
-		five := NewDollar(5)
-		assert.Equal(t, NewDollar(10), NewDollar(five.Times(2).amount))
-		assert.Equal(t, NewDollar(15), NewDollar(five.Times(3).amount))
-	})
-	t.Run("should return same amount if Dollar creates from factory method", func(t *testing.T) {
-		five := NewDollar(5)
-		assert.Equal(t, NewDollar(10), NewDollar(five.Times(2).amount))
-		assert.Equal(t, NewDollar(15), NewDollar(five.Times(3).amount))
+		five := NewMoney(5, "USD")
+		assert.Equal(t, NewMoney(10, "USD"), five.Times(2))
+		assert.Equal(t, NewMoney(15, "USD"), five.Times(3))
 	})
 }
 
 func TestEquals(t *testing.T) {
 	t.Run("should return true if two Dollars have same amount", func(t *testing.T) {
-		dollar := DollarToMoney(NewDollar(5))
-		assert.True(t, NewDollar(5).Equals(dollar))
+		dollar := NewMoney(5, "USD")
+		assert.True(t, NewMoney(5, "USD").Equals(dollar))
 	})
 	t.Run("should return false if two Dollars have different amount", func(t *testing.T) {
-		dollar := DollarToMoney(NewDollar(7))
-		assert.False(t, NewDollar(5).Equals(dollar))
-	})
-	t.Run("should return true if two Francs have same amount", func(t *testing.T) {
-		franc := FrancToMoney(NewFranc(5))
-		assert.True(t, NewFranc(5).Equals(franc))
-	})
-	t.Run("should return false if two Francs have different amount", func(t *testing.T) {
-		franc := FrancToMoney(NewFranc(7))
-		assert.False(t, NewFranc(5).Equals(franc))
+		dollar := NewMoney(7, "USD")
+		assert.False(t, NewMoney(5, "USD").Equals(dollar))
 	})
 
 	t.Run("should return false when Franc and Dollar are compared", func(t *testing.T) {
-		dollar := DollarToMoney(NewDollar(5))
-		assert.False(t, NewFranc(7).Equals(dollar))
-	})
-
-	t.Run("should return true when currency", func(t *testing.T) {
-		money := NewMoney(5, "USD")
-		dollar := DollarToMoney(NewDollar(5))
-		assert.True(t, money.Equals(dollar))
+		dollar := NewMoney(5, "USD")
+		assert.False(t, NewMoney(7, "CHF").Equals(dollar))
 	})
 }
 
 func TestFrancMultiplication(t *testing.T) {
 	t.Run("should return same amount if Dollar multiplies by times()", func(t *testing.T) {
-		five := NewFranc(5)
-		assert.Equal(t, NewFranc(10), NewFranc(five.Times(2).amount))
-		assert.Equal(t, NewFranc(15), NewFranc(five.Times(3).amount))
+		five := NewMoney(5, "CHF")
+		assert.Equal(t, NewMoney(10, "CHF"), five.Times(2))
+		assert.Equal(t, NewMoney(15, "CHF"), five.Times(3))
 	})
 }
 
 func TestCurrency(t *testing.T) {
 	t.Run("should return correct currency name", func(t *testing.T) {
-		assert.Equal(t, "CHF", NewFranc(4).Currency())
-		assert.Equal(t, "USD", NewDollar(4).Currency())
+		assert.Equal(t, "CHF", NewMoney(10, "CHF").currency)
+		assert.Equal(t, "USD", NewMoney(10, "USD").currency)
 	})
 }
