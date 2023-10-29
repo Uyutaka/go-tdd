@@ -73,6 +73,7 @@ func (s Sum) Reduce(bank Bank, to string) Money {
 func (s Sum) Times(multiplier int) Expression {
 	return NewSum(s.augend.Times(multiplier), s.addend.Times(multiplier))
 }
+
 type Pair struct {
 	from string
 	to   string
@@ -84,12 +85,4 @@ func (m Sum) Plus(addend Expression) Expression {
 
 func NewPair(from string, to string) Pair {
 	return Pair{from: from, to: to}
-}
-
-func (p Pair) equals(other Pair) bool {
-	return p.from == other.from && p.to == other.to
-}
-
-func (p Pair) hashCode() int {
-	return 0
 }
