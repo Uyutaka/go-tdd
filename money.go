@@ -27,6 +27,7 @@ type Money struct {
 }
 
 type Expression interface {
+	Times(multiplier int) Expression
 	Plus(addend Expression) Expression
 	Reduce(bank Bank, to string) Money
 }
@@ -63,21 +64,22 @@ func NewSum(augend Expression, addend Expression) Sum {
 	return Sum{augend: augend, addend: addend}
 }
 
-func (m Sum) Reduce(bank Bank, to string) Money {
-	augend := m.augend.Reduce(bank, to)
-	addend := m.addend.Reduce(bank, to)
+func (s Sum) Reduce(bank Bank, to string) Money {
+	augend := s.augend.Reduce(bank, to)
+	addend := s.addend.Reduce(bank, to)
 	total := augend.amount + addend.amount
 	return NewMoney(total, to)
 }
-
+func (s Sum) Times(multiplier int) Expression {
+	return NewSum(s.augend.Times(multiplier), s.addend.Times(multiplier))
+}
 type Pair struct {
 	from string
 	to   string
 }
 
 func (m Sum) Plus(addend Expression) Expression {
-	// TODO temporary implementation
-	return Sum{}
+	return NewSum(m, addend)
 }
 
 func NewPair(from string, to string) Pair {
