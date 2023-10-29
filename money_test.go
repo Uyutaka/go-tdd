@@ -49,8 +49,46 @@ func TestSimpleAddition(t *testing.T) {
 	t.Run("should return $10 if $5 + $5", func(t *testing.T) {
 		five := NewMoney(5, "USD")
 		sum := five.Plus(five)
-		bank := Bank{}
+		bank := NewBank()
 		reduced := bank.Reduce(sum, "USD")
 		assert.Equal(t, NewMoney(10, "USD"), reduced)
+	})
+	t.Run("plust should return sum", func(t *testing.T) {
+		five := NewMoney(5, "USD")
+		result := five.Plus(five)
+		sum, ok := result.(Sum)
+		if !ok {
+			t.Errorf("result is not Sum")
+		}
+		assert.Equal(t, five, sum.augend)
+		assert.Equal(t, five, sum.addend)
+	})
+}
+func TestReduce(t *testing.T) {
+	t.Run("return correct total dollars", func(t *testing.T) {
+		sum := NewSum(NewMoney(3, "USD"), NewMoney(4, "USD"))
+		bank := NewBank()
+		result := bank.Reduce(sum, "USD")
+		assert.Equal(t, NewMoney(7, "USD"), result)
+	})
+	t.Run("reduce money", func(t *testing.T) {
+		bank := NewBank()
+		result := bank.Reduce(NewMoney(3, "USD"), "USD")
+		assert.Equal(t, NewMoney(3, "USD"), result)
+	})
+}
+func TestAddRate(t *testing.T) {
+	t.Run("reduce money different currency", func(t *testing.T) {
+		bank := NewBank()
+		bank.AddRate("CHF", "USD", 2)
+		result := bank.Reduce(NewMoney(2, "CHF"), "USD")
+		assert.Equal(t, NewMoney(1, "USD"), result)
+	})
+}
+
+func TestRate(t *testing.T) {
+	t.Run("rate should return 1 when two currencies are same", func(t *testing.T) {
+		bank := NewBank()
+		assert.Equal(t, 1, bank.Rate("USD", "USD"))
 	})
 }

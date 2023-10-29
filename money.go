@@ -12,8 +12,13 @@ func (m Money) Equals(other Money) bool {
 	return m.amount == other.amount && m.currency == other.currency
 }
 
-func (m Money) Plus(money Money) Expression {
-	return NewMoney(m.amount+money.amount, m.currency)
+func (m Money) Plus(addend Money) Expression {
+	return NewSum(m, addend)
+}
+
+func (m Money) Reduce(bank Bank, to string) Money {
+	rate := bank.Rate(m.currency, to)
+	return NewMoney(m.amount/rate, to)
 }
 
 type Money struct {
@@ -22,9 +27,59 @@ type Money struct {
 }
 
 type Expression interface {
+	Reduce(bank Bank, to string) Money
 }
-type Bank struct{}
+type Bank struct {
+	rates map[Pair]int
+}
+
+func NewBank() Bank {
+	return Bank{rates: make(map[Pair]int)}
+}
+
+func (b Bank) Rate(from string, to string) int {
+	if from == to {
+		return 1
+	}
+	return b.rates[NewPair(from, to)]
+}
 
 func (b Bank) Reduce(source Expression, to string) Money {
-	return NewMoney(10, "USD")
+	return source.Reduce(b, to)
+}
+
+func (b Bank) AddRate(from string, to string, rate int) {
+	pair := NewPair(from, to)
+	b.rates[pair] = rate
+}
+
+type Sum struct {
+	augend Money
+	addend Money
+}
+
+func NewSum(augend Money, addend Money) Sum {
+	return Sum{augend: augend, addend: addend}
+}
+
+func (m Sum) Reduce(bank Bank, to string) Money {
+	total := m.augend.amount + m.addend.amount
+	return NewMoney(total, to)
+}
+
+type Pair struct {
+	from string
+	to   string
+}
+
+func NewPair(from string, to string) Pair {
+	return Pair{from: from, to: to}
+}
+
+func (p Pair) equals(other Pair) bool {
+	return p.from == other.from && p.to == other.to
+}
+
+func (p Pair) hashCode() int {
+	return 0
 }
