@@ -1,6 +1,6 @@
 package main
 
-func (m Money) Times(multiplier int) Money {
+func (m Money) Times(multiplier int) Expression {
 	return NewMoney(m.amount*multiplier, m.currency)
 }
 
@@ -12,7 +12,7 @@ func (m Money) Equals(other Money) bool {
 	return m.amount == other.amount && m.currency == other.currency
 }
 
-func (m Money) Plus(addend Money) Expression {
+func (m Money) Plus(addend Expression) Expression {
 	return NewSum(m, addend)
 }
 
@@ -27,6 +27,7 @@ type Money struct {
 }
 
 type Expression interface {
+	Plus(addend Expression) Expression
 	Reduce(bank Bank, to string) Money
 }
 type Bank struct {
@@ -54,22 +55,29 @@ func (b Bank) AddRate(from string, to string, rate int) {
 }
 
 type Sum struct {
-	augend Money
-	addend Money
+	augend Expression
+	addend Expression
 }
 
-func NewSum(augend Money, addend Money) Sum {
+func NewSum(augend Expression, addend Expression) Sum {
 	return Sum{augend: augend, addend: addend}
 }
 
 func (m Sum) Reduce(bank Bank, to string) Money {
-	total := m.augend.amount + m.addend.amount
+	augend := m.augend.Reduce(bank, to)
+	addend := m.addend.Reduce(bank, to)
+	total := augend.amount + addend.amount
 	return NewMoney(total, to)
 }
 
 type Pair struct {
 	from string
 	to   string
+}
+
+func (m Sum) Plus(addend Expression) Expression {
+	// TODO temporary implementation
+	return Sum{}
 }
 
 func NewPair(from string, to string) Pair {
